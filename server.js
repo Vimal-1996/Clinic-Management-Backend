@@ -2,7 +2,8 @@ const express = require('express')
 const cors = require('cors')
 const bodyParser = require('body-parser')
 const connectDBPromise = require('./database/dbConnect')
-const registerApi = require('../Backend/Login_Func/login')
+const patientLoginApi = require('./Login_Func/patientLogin')
+const adminLoginApi = require('./Login_Func/adminLogin')
 const passportConfig = require('../Backend/authentication/googleOauth');
 const passport = require('passport')
 const session  =require('express-session')
@@ -18,7 +19,8 @@ connectDBPromise.then((success_message)=>{
     console.log(error_message)
 })
 
-app.use('/',registerApi);
+app.use('/',patientLoginApi);
+app.use('/admin',adminLoginApi);
 
 const server = app.listen(PORT,()=>{
     console.log(`Server running on port ${PORT}`)   
