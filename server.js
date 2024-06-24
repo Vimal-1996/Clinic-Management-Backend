@@ -19,8 +19,8 @@ connectDBPromise.then((success_message)=>{
     console.log(error_message)
 })
 
-app.use('/',patientLoginApi);
 app.use('/admin',adminLoginApi);
+app.use('/patient',patientLoginApi);
 
 const server = app.listen(PORT,()=>{
     console.log(`Server running on port ${PORT}`)   
