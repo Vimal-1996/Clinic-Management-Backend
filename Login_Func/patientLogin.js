@@ -2,6 +2,7 @@ const express = require('express')
 const Patient = require('../database/patientModel')
 const Appointment = require('../database/appointmentModel')
 var passport = require('passport');
+const {ObjectId} = require('mongodb')
 const router = express.Router()
 
 
@@ -65,7 +66,37 @@ router.post('/appointment', async (req, res) => {
 router.post('/getappointments', async (req, res) => {
     const { userId } = req.body
     try {
-        const appointments = await Appointment.find({ patientName: userId })
+        const appointments = await Appointment.aggregate([
+            {
+                $match:{"patientName":new ObjectId(userId)}
+            },
+            {
+                $lookup: {
+                    from: "doctors",           
+                    localField: "doctorName",  
+                    foreignField: "_id",       
+                    as: "doctorDetails"
+                  }
+            },
+            {
+                $unwind:"$doctorDetails"
+            },
+            {
+                $lookup:{
+                    from:"patients",
+                    localField:"patientName",
+                    foreignField:"_id",
+                    as:"patientDetails"
+                }
+            },
+            {
+                $unwind:"$patientDetails"
+            },
+            {
+                $project:{appointmentDate:1, session:1, time:1,appointmentStatus:1,appointmentVisible:1,appointmentRefid:1,"doctorDetails.doctorName":1,"patientDetails.patientName":1}
+            }
+        ])
+        console.log(appointments)
         res.status(201).json({ message: "get all appointment" , appointments})
     } catch (err) {
 

@@ -5,7 +5,8 @@ const Patient = require('../database/patientModel');
 const Doctor = require('../database/doctorModel');
 const Appointment = require('../database/appointmentModel')
 
-const { generateWebToken,verifyWebToken } = require('../jwt/jwtfunctions')
+const { generateWebToken,verifyWebToken } = require('../jwt/jwtfunctions');
+const { session } = require('passport');
 
 
 router.get('/login', (req, res) => {
@@ -107,7 +108,7 @@ router.post('/addnewappointment',async(req,res)=>{
     
 
     try{
-        const appointment = new Appointment({appointmentDate:appointmentDate,session:session,time:appointmentTime,doctorName:doctorName,patientName:patientName,appointmentRefid:createRefId()})
+        const appointment = new Appointment({appointmentDate:appointmentDate,session:session,time:appointmentTime,doctorName:doctorName,patientName:patientName,appointmentRefid:createRefId(),appointmentVisibile:true,appointmentStatus:"Confirmed"})
         await appointment.save();
         res.status(201).json({message:"New Appointment created"})
     }

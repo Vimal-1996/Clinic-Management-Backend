@@ -16,7 +16,9 @@ const appointmentSchema = new mongoose.Schema({
         ref:Patient,
         required:true
     },
-    appointmentRefid:String
+    appointmentRefid:String,
+    appointmentStatus:String,
+    appointmentVisibile:Boolean
 })
 
 const Appointment = mongoose.model('Appointment', appointmentSchema)
