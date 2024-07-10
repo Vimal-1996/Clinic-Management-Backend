@@ -55,7 +55,7 @@ router.post('/register', async (req, res) => {
 router.post('/appointment', async (req, res) => {
     try {
         const { appointmentDate, appointmentTime, session, doctorName, patientName } = req.body
-        const appointment = new Appointment({ appointmentDate, session, time: appointmentTime, doctorName, patientName, appointmentRefid: createRefId() })
+        const appointment = new Appointment({ appointmentDate, session, time: appointmentTime, doctorName, patientName, appointmentRefid: createRefId(), appointmentStatus:"Pending",consultationStatus:"pending" })
         await appointment.save();
         res.status(201).json({ message: "New appointment created" })
     } catch (err) {
@@ -69,6 +69,7 @@ router.post('/getappointments', async (req, res) => {
         const appointments = await Appointment.aggregate([
             {
                 $match:{"patientName":new ObjectId(userId)}
+              // $match:{"patientName":ObjectId.createFromTime(parseInt(userId,10))}
             },
             {
                 $lookup: {
@@ -96,10 +97,36 @@ router.post('/getappointments', async (req, res) => {
                 $project:{appointmentDate:1, session:1, time:1,appointmentStatus:1,appointmentVisible:1,appointmentRefid:1,"doctorDetails.doctorName":1,"patientDetails.patientName":1}
             }
         ])
-        console.log(appointments)
         res.status(201).json({ message: "get all appointment" , appointments})
     } catch (err) {
+        res.status(500).json({ message: "Error in getting appointment" })
+    }
+})
 
+router.get('/getpatientdetails',async(req,res)=>{
+    const userId = req.query.id
+    console.log(userId)
+    try{
+        const patient = await Patient.findById(userId).exec()
+        if (patient) {
+            console.log(patient)
+            res.status(201).json({ message: "User found", patient })
+        } else {
+            res.status(500).json({ message: "user not found in else blcok" })
+        }
+    }
+    catch(err){
+        console.log(err)
+    }
+})
+
+router.post('/savepatientdetails',async(req,res)=>{
+    const {_id, patientName,age, mobileNumber, email, password} = req.body.userInfo
+    try{
+       const patient = await Patient.findByIdAndUpdate(_id,{patientName,age,mobileNumber,email,password})
+       res.status(201).json({message:"Patient Updated"})
+    }catch(err){
+        res.status(401).json({err})
     }
 })
 

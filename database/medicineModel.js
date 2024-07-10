@@ -1,13 +1,13 @@
-const { ObjectId } = require('mongodb')
 const mongoose = require('mongoose')
 const Patient = require('../database/patientModel')
+const ObjectId = require('mongodb')
 
 const medicineSchema = new mongoose.Schema({
     medicines:{
         type:[String],
     },
     patientId:{
-        type:mongoose.Types.Schema.ObjectId,
+        type:mongoose.Schema.Types.ObjectId,
         ref:Patient
     }
 })
