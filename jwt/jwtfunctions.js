@@ -1,9 +1,9 @@
 const jwt = require('jsonwebtoken')
 
 const generateWebToken = (payload) => {
-    const { userId, email } = payload
+    const { userId, email,role } = payload
     return new Promise(async (resolve, reject) => {
-        jwt.sign({ 'userId': userId, 'email': email, role:"admin" },"mysecret" ,{ expiresIn: '1h' }, (err, token) => {
+        jwt.sign({ 'userId': userId, 'email': email, role:role },"mysecret" ,{ expiresIn: '1h' }, (err, token) => {
             if (token) {
                 resolve({token:token, email:email})
             } else if (err) {
