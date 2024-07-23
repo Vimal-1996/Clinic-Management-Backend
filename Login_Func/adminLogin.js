@@ -5,7 +5,7 @@ const Patient = require('../database/patientModel');
 const Doctor = require('../database/doctorModel');
 const Appointment = require('../database/appointmentModel')
 
-const { generateWebToken, verifyWebToken } = require('../jwt/jwtfunctions');
+const { generateWebToken, authenticateToken } = require('../jwt/jwtfunctions');
 const { session } = require('passport');
 
 
@@ -22,7 +22,7 @@ router.post('/login', async (req, res) => {
     try {
         const admin = await Admin.findOne(filter, { _id: 1, email: 1, password: 1 })
         if (admin) {
-            const payload = { userId: admin._id, email: admin.email }
+            const payload = { userId: admin._id, email: admin.email, role: req.body.role }
             await generateWebToken(payload).then((token) => { res.status(201).json({ message: "User found", token: token }) }).catch((err) => { res.status(500).json({ message: "User doesn't exist, Check your username and password" }) })
         } else {
             res.status(500).json({ message: "User doesn't exist, Check your username and password" })
@@ -34,26 +34,29 @@ router.post('/login', async (req, res) => {
 })
 
 
-router.get('/doctorDetails', async (req, res) => {
+router.get('/doctorDetails',  async (req, res) => {
     try {
         const doctors = await Doctor.find({}, { _id: 1, doctorName: 1, specialised: 1, speciality: 1, role: 1, accountStatus: 1 })
         if (doctors) {
             res.status(201).json({ doctors: doctors })
         } else {
-            res.status(500).json({ message: "Error fetching patient details" })
+
+            res.status(500).json({ message: "Error fetching doctor details" })
         }
     } catch (err) {
         res.status(401).json({ message: "failed api call" })
     }
 })
 
-router.get('/patientDetails', async (req, res) => {
+router.get('/patientDetails',  async (req, res) => {
     try {
 
         const patients = await Patient.find({}, { _id: 1, patientName: 1, age: 1, mobileNumber: 1, role: 1, accountStatus: 1 })
         if (patients) {
+
             res.status(201).json({ patients: patients })
         } else {
+
             res.status(500).json({ message: "Error fetching patient details" })
         }
     } catch (err) {
@@ -108,7 +111,7 @@ router.post('/addnewappointment', async (req, res) => {
 
 
     try {
-        const appointment = new Appointment({ appointmentDate: appointmentDate, session: session, time: appointmentTime, doctorName: doctorName, patientName: patientName, appointmentRefid: createRefId(), appointmentVisibile: true, appointmentStatus: "Confirmed" })
+        const appointment = new Appointment({ appointmentDate: appointmentDate, session: session, time: appointmentTime, doctorName: doctorName, patientName: patientName, appointmentRefid: createRefId(), appointmentVisibile: true, appointmentStatus: "confirmed" })
         await appointment.save();
         res.status(201).json({ message: "New Appointment created" })
     }
@@ -164,5 +167,37 @@ router.post('/updateappointmentstatus', async (req, res) => {
     res.status(201).json({ message: "updated appointment status" })
 })
 
+router.get('/deletedoctor', authenticateToken, async (req, res) => {
+    await Doctor.findByIdAndDelete(req.query.doctorid)
+        .then((res) => console.log(res))
+        .catch((error) => {
+            console.log("Error during update")
+        })
+    res.status(201).json({ message: "doctor successfully deleted" })
+})
 
+router.get('/deletepatient',  authenticateToken, async (req, res) => {
+  
+    await Patient.findByIdAndDelete(req.query.patientid)
+        .then((res) => console.log(res))
+        .catch((error) => {
+            console.log("Error during update")
+        })
+     res.status(201).json({ message: "patient successfully deleted" })
+})
+
+router.post('/editdoctor',authenticateToken,async(req,res)=>{
+    await Doctor.findOneAndUpdate({_id:req.body.id},{doctorName:req.body.doctorName, specialised:req.body.specialisedValue, speciality:req.body.specialityValue})
+    .then((res)=>{})
+    .catch((err)=>{})
+    res.status(201).json({"message":"doctor updated"}) 
+})
+
+
+router.post('/editpatient',authenticateToken,async(req,res)=>{
+    await Patient.findOneAndUpdate({_id:req.body.id},{age:req.body.age, mobileNumber:req.body.mobileNumber})
+    .then((res)=>{})
+    .catch((err)=>{})
+    res.status(201).json({"message":"patient updated"}) 
+})
 module.exports = router
