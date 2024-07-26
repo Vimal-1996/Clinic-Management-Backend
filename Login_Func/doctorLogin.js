@@ -15,7 +15,7 @@ router.post('/login', async (req, res) => {
             console.log(doctor)
             res.status(201).json({ message: "User found", doctor })
         } else {
-            res.status(500).json({ message: "user not found in else blcok" })
+            res.status(500).json({ message: "user not found in else block" })
         }
     } catch (err) {
         res.status(500).json({ message: "user not found in catch block" })
@@ -38,7 +38,7 @@ router.get('/getappointments', async (req, res) => {
                 $match: { "doctorName": new ObjectId(req.query.id) },
             },
             {
-                $match: { "appointmentStatus": "Confirmed" }
+                $match: { "appointmentStatus": "confirmed" }
             },
             {
                 $addFields: {
@@ -54,7 +54,7 @@ router.get('/getappointments', async (req, res) => {
                     upcomingAppointments: [
                         {
                             $match: {
-                                convertedDate: { $gte: today }
+                                convertedDate: { $gt: today }
                             },
                         },
                         {

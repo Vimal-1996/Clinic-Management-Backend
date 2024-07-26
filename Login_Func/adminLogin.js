@@ -36,7 +36,7 @@ router.post('/login', async (req, res) => {
 
 router.get('/doctorDetails',  async (req, res) => {
     try {
-        const doctors = await Doctor.find({}, { _id: 1, doctorName: 1, specialised: 1, speciality: 1, role: 1, accountStatus: 1 })
+        const doctors = await Doctor.find({}, { _id: 1, doctorName: 1, specialised: 1, speciality: 1, role: 1, accountStatus: 1 }) .sort({"doctorName":1})
         if (doctors) {
             res.status(201).json({ doctors: doctors })
         } else {
@@ -51,7 +51,7 @@ router.get('/doctorDetails',  async (req, res) => {
 router.get('/patientDetails',  async (req, res) => {
     try {
 
-        const patients = await Patient.find({}, { _id: 1, patientName: 1, age: 1, mobileNumber: 1, role: 1, accountStatus: 1 })
+        const patients = await Patient.find({}, { _id: 1, patientName: 1, age: 1, mobileNumber: 1, role: 1, accountStatus: 1 }).sort({"patientName":1})
         if (patients) {
 
             res.status(201).json({ patients: patients })
@@ -67,8 +67,9 @@ router.get('/patientDetails',  async (req, res) => {
 
 router.post('/addnewdoctor', async (req, res) => {
     const { doctorName, specialised, speciality } = req.body
+  
     try {
-        const doctor = new Doctor({ doctorName, specialised, speciality, accountStatus: true, email: `${doctorName}@gmail.com`, password: "123456" })
+        const doctor = new Doctor({ doctorName, specialised, speciality, accountStatus: true, email: `${doctorName.toLowerCase()}@gmail.com`, password: "123456" })
         await doctor.save();
         res.status(201).json({ message: "New Doctor created" })
     }

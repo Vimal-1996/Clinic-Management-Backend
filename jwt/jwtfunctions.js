@@ -22,6 +22,7 @@ const authenticateToken = async (req, res, next) => {
     else {
         await jwt.verify(token, "myaccesssecret", (err, user) => {
             if (err) {
+                console.log(err)
                 console.log("failed to verify token")
                 return res.sendStatus(403)
             } else {
