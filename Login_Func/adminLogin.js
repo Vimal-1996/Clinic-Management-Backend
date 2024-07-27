@@ -112,7 +112,7 @@ router.post('/addnewappointment', async (req, res) => {
 
 
     try {
-        const appointment = new Appointment({ appointmentDate: appointmentDate, session: session, time: appointmentTime, doctorName: doctorName, patientName: patientName, appointmentRefid: createRefId(), appointmentVisibile: true, appointmentStatus: "confirmed" })
+        const appointment = new Appointment({ appointmentDate: appointmentDate, session: session, time: appointmentTime, doctorName: doctorName, patientName: patientName, appointmentRefid: createRefId(), appointmentVisibile: true, appointmentStatus: "confirmed", consultationStatus:"pending" })
         await appointment.save();
         res.status(201).json({ message: "New Appointment created" })
     }

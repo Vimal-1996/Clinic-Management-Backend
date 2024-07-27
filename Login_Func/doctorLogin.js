@@ -24,12 +24,14 @@ router.post('/login', async (req, res) => {
 
 router.get('/getappointments', async (req, res) => {
     const today = new Date();
-    today.setHours(0, 0, 0, 0);
+    today.setDate()
+    today.setHours(today.getHours(), today.getMinutes(), today.getSeconds(), 0);
+    
 
-    const tomorrow = new Date(today);
-    const yesterday = new Date(today);
-    tomorrow.setDate(today.getDate() + 1);
-    yesterday.setDate(today.getDate() - 1);
+    const tomorrow = new Date();
+    const yesterday = new Date();
+    tomorrow.setDate(today.getUTCDate() + 1);
+    yesterday.setDate(today.getUTCDate() - 1);
 
     try {
 
@@ -200,7 +202,10 @@ router.post('/prescriptiondetails', async (req, res) => {
         await medicine.save();
         const updatedAppointment = await Appointment.findOneAndUpdate(
             { appointmentRefid: req.body.appointmentReferenceId },
-            { consultationStatus: "consulted" },)
+            { consultationStatus: "consulted"},)
+           .then(()=>{
+            console.log("successfully updated appointment")
+           })
             .catch((error) => {
                 console.log("Error during update")
             })

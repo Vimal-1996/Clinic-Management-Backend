@@ -18,7 +18,8 @@ const appointmentSchema = new mongoose.Schema({
     },
     appointmentRefid:String,
     appointmentStatus:String,
-    appointmentVisibile:Boolean
+    appointmentVisibile:Boolean,
+    consultationStatus:String
 })
 
 const Appointment = mongoose.model('Appointment', appointmentSchema)
