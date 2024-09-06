@@ -55,6 +55,11 @@ router.get('/getappointments', async (req, res) => {
                 $facet: {
                     upcomingAppointments: [
                         {
+                            $match:{
+                                consultationStatus:{$ne:"consulted" }
+                            }
+                        }, 
+                        {
                             $match: {
                                 convertedDate: { $gt: today }
                             },
