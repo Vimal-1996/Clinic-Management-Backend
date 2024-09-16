@@ -5,8 +5,7 @@ const connectDBPromise = require('./database/dbConnect')
 const patientLoginApi = require('./Login_Func/patientLogin')
 const adminLoginApi = require('./Login_Func/adminLogin')
 const doctorLoginApi = require('./Login_Func/doctorLogin')
-const passportConfig = require('../Backend/authentication/googleOauth');
-const passport = require('passport')
+
 const session  =require('express-session')
 require('dotenv').config();
 const PORT = process.env.PORT;

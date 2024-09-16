@@ -1,7 +1,7 @@
 const express = require('express')
 const Patient = require('../database/patientModel')
 const Appointment = require('../database/appointmentModel')
-var passport = require('passport');
+
 const {ObjectId} = require('mongodb')
 const router = express.Router()
 

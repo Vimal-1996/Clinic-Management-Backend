@@ -4,7 +4,6 @@ const Doctor = require('../database/doctorModel')
 const Patient = require('../database/patientModel')
 const Appointment = require('../database/appointmentModel')
 const { ObjectId } = require('mongodb')
-const { session } = require('passport')
 const Medicine = require('../database/medicineModel');
 
 router.post('/login', async (req, res) => {

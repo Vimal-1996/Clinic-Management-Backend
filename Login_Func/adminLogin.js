@@ -5,8 +5,6 @@ const Patient = require('../database/patientModel');
 const Doctor = require('../database/doctorModel');
 const Appointment = require('../database/appointmentModel')
 
-const { generateWebToken, authenticateToken } = require('../jwt/jwtfunctions');
-const { session } = require('passport');
 
 
 router.get('/login', (req, res) => {
