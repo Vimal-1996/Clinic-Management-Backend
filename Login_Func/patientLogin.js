@@ -3,6 +3,7 @@ const Patient = require('../database/patientModel')
 const Appointment = require('../database/appointmentModel')
 var passport = require('passport');
 const {ObjectId} = require('mongodb')
+const Medicine = require('../database/medicineModel')
 const router = express.Router()
 
 
@@ -129,6 +130,20 @@ router.post('/savepatientdetails',async(req,res)=>{
         res.status(401).json({err})
     }
 })
+
+router.get('/medicines', async(req,res)=>{
+    const {userId} = req.query;
+    try{
+        const medicines = await Medicine.findOne({patientId:userId})
+        console.log(medicines)
+        res.status(201).json({message:"medicines received",medicines})
+    }catch(err){
+        res.status(404).json({err})
+
+    }
+}
+    
+)
 
 
 module.exports = router
