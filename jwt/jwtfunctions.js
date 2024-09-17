@@ -6,6 +6,7 @@ const generateWebToken = (payload) => {
         const refreshToken = await jwt.sign({ 'userId': userId, 'email': email, role: role }, "myrefreshsecret")
         const token = await jwt.sign({ 'userId': userId, 'email': email, role: role }, "myaccesssecret", { expiresIn: '10m' });
         if (refreshToken && token) {
+            console.log("token created")
             resolve({ token: token, email: email, refreshToken: refreshToken })
         } else {
             reject("Tokens not created")

@@ -4,9 +4,8 @@ const Admin = require('../database/adminModel')
 const Patient = require('../database/patientModel');
 const Doctor = require('../database/doctorModel');
 const Appointment = require('../database/appointmentModel')
+const jtwtfuncs = require('../jwt/jwtfunctions')
 
-const { generateWebToken, authenticateToken } = require('../jwt/jwtfunctions');
-const { session } = require('passport');
 
 
 router.get('/login', (req, res) => {
@@ -23,7 +22,7 @@ router.post('/login', async (req, res) => {
         const admin = await Admin.findOne(filter, { _id: 1, email: 1, password: 1 })
         if (admin) {
             const payload = { userId: admin._id, email: admin.email, role: req.body.role }
-            await generateWebToken(payload).then((token) => { res.status(201).json({ message: "User found", token: token }) }).catch((err) => { res.status(500).json({ message: "User doesn't exist, Check your username and password" }) })
+            await jtwtfuncs.generateWebToken(payload).then((token) => { res.status(201).json({ message: "User found", token: token }) }).catch((err) => { res.status(500).json({ message: "User doesn't exist, Check your username and password" }) })
         } else {
             res.status(500).json({ message: "User doesn't exist, Check your username and password" })
         }
@@ -168,7 +167,7 @@ router.post('/updateappointmentstatus', async (req, res) => {
     res.status(201).json({ message: "updated appointment status" })
 })
 
-router.get('/deletedoctor', authenticateToken, async (req, res) => {
+router.get('/deletedoctor',  async (req, res) => {
     await Doctor.findByIdAndDelete(req.query.doctorid)
         .then((res) => console.log(res))
         .catch((error) => {
@@ -177,7 +176,7 @@ router.get('/deletedoctor', authenticateToken, async (req, res) => {
     res.status(201).json({ message: "doctor successfully deleted" })
 })
 
-router.get('/deletepatient',  authenticateToken, async (req, res) => {
+router.get('/deletepatient', async (req, res) => {
   
     await Patient.findByIdAndDelete(req.query.patientid)
         .then((res) => console.log(res))
@@ -187,7 +186,7 @@ router.get('/deletepatient',  authenticateToken, async (req, res) => {
      res.status(201).json({ message: "patient successfully deleted" })
 })
 
-router.post('/editdoctor',authenticateToken,async(req,res)=>{
+router.post('/editdoctor',async(req,res)=>{
     await Doctor.findOneAndUpdate({_id:req.body.id},{doctorName:req.body.doctorName, specialised:req.body.specialisedValue, speciality:req.body.specialityValue})
     .then((res)=>{})
     .catch((err)=>{})
@@ -195,7 +194,7 @@ router.post('/editdoctor',authenticateToken,async(req,res)=>{
 })
 
 
-router.post('/editpatient',authenticateToken,async(req,res)=>{
+router.post('/editpatient',async(req,res)=>{
     await Patient.findOneAndUpdate({_id:req.body.id},{age:req.body.age, mobileNumber:req.body.mobileNumber})
     .then((res)=>{})
     .catch((err)=>{})
